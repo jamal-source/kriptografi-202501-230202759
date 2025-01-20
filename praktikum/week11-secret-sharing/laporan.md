@@ -1,18 +1,17 @@
 # Laporan Praktikum Kriptografi
 Minggu ke-: 11
 Topik: Secret Sharing
-Nama: [Nama Mahasiswa]  
-NIM: [NIM Mahasiswa]  
-Kelas: [Kelas]  
+Nama: Jamaludin
+NIM: 230202759
+Kelas: 5IKRB
 
 ---
 
 ## 1. Tujuan
 Setelah mengikuti praktikum ini, mahasiswa diharapkan mampu:
-1. Memahami konsep Secret Sharing dan implementasinya menggunakan algoritma Shamir.
-2. Membuat program untuk membagi rahasia menjadi beberapa bagian (shares).
-3. Merekaonstruksi rahasia dari kombinasi shares yang cukup.
-4. Menganalisis keamanan dan aplikasi praktis dari Secret Sharing.
+1. Menjelaskan konsep Shamir Secret Sharing (SSS).
+2. Melakukan simulasi pembagian rahasia ke beberapa pihak menggunakan skema SSS.
+3. Menganalisis keamanan skema distribusi rahasia.
 
 ---
 
@@ -26,19 +25,19 @@ Teknik ini berguna dalam sistem keamanan di mana rahasia harus dilindungi dari k
 ---
 
 ## 3. Alat dan Bahan
-(- Python 3.x  
-- Visual Studio Code / editor lain  
-- Git dan akun GitHub  
-- Library tambahan (misalnya pycryptodome, jika diperlukan)  )
+- Python 3.x
+- Visual Studio Code / editor lain
+- Git dan akun GitHub
+- Library tambahan (implementasi manual tanpa library eksternal)
 
 ---
 
 ## 4. Langkah Percobaan
-(Tuliskan langkah yang dilakukan sesuai instruksi.  
-Contoh format:
-1. Membuat file `caesar_cipher.py` di folder `praktikum/week2-cryptosystem/src/`.
-2. Menyalin kode program dari panduan praktikum.
-3. Menjalankan program dengan perintah `python caesar_cipher.py`.)
+1. Membuat folder praktikum/week11-secret-sharing/src/ dan praktikum/week11-secret-sharing/screenshots/.
+2. Membuat file secret_sharing.py di folder src/.
+3. Mengimplementasikan kelas ShamirSecretSharing dengan metode untuk membagi dan merekonstruksi rahasia.
+4. Menjalankan program dengan perintah python secret_sharing.py dan menyimpan output ke output.txt.
+5. Mengambil screenshot hasil eksekusi dan menyimpannya di folder screenshots/.
 
 ---
 
@@ -77,7 +76,7 @@ class ShamirSecretSharing:
             term = yi
             for j, (xj, _) in enumerate(points):
                 if i != j:
-                    term = term * (x - xj) * self._mod_inverse(xi - xj, self.prime) % self.prime
+                    term = term * (x - xj) * self._mod_inverse((xi - xj) % self.prime, self.prime) % self.prime
             result = (result + term) % self.prime
         return result
 
@@ -85,16 +84,16 @@ class ShamirSecretSharing:
         """Split secret into n shares, requiring k shares to reconstruct"""
         if secret >= self.prime:
             raise ValueError("Secret too large for prime field")
-        
+
         # Generate random coefficients for polynomial of degree k-1
         coeffs = [secret] + [random.randint(0, self.prime - 1) for _ in range(k - 1)]
-        
+
         # Generate n shares
         shares = []
         for i in range(1, n + 1):
             y = self._evaluate_polynomial(coeffs, i)
             shares.append((i, y))
-        
+
         return shares
 
     def reconstruct_secret(self, shares):
@@ -104,33 +103,33 @@ class ShamirSecretSharing:
 # Demo
 if __name__ == "__main__":
     sss = ShamirSecretSharing()
-    
+
     # Example: Split secret 12345 into 5 shares, requiring 3 to reconstruct
     secret = 12345
     n = 5  # Total shares
     k = 3  # Threshold
-    
+
     print(f"Original secret: {secret}")
-    
+
     # Split secret
     shares = sss.split_secret(secret, n, k)
     print(f"Generated {n} shares:")
     for share in shares:
         print(f"  Share {share[0]}: {share[1]}")
-    
+
     # Reconstruct with different combinations
     print("\nReconstructing with different combinations:")
-    
+
     # Test with k shares
     subset_k = shares[:k]
     reconstructed = sss.reconstruct_secret(subset_k)
     print(f"With {k} shares {subset_k}: Reconstructed secret = {reconstructed}")
-    
+
     # Test with more than k shares
     subset_more = shares[:k+1]
     reconstructed = sss.reconstruct_secret(subset_more)
     print(f"With {k+1} shares {subset_more}: Reconstructed secret = {reconstructed}")
-    
+
     # Test with less than k shares (should fail)
     subset_less = shares[:k-1]
     reconstructed = sss.reconstruct_secret(subset_less)
@@ -140,49 +139,57 @@ if __name__ == "__main__":
 ---
 
 ## 6. Hasil dan Pembahasan
-(- Lampirkan screenshot hasil eksekusi program (taruh di folder `screenshots/`).  
-- Berikan tabel atau ringkasan hasil uji jika diperlukan.  
-- Jelaskan apakah hasil sesuai ekspektasi.  
-- Bahas error (jika ada) dan solusinya. 
+Hasil eksekusi program menunjukkan bahwa rahasia berhasil dibagi menjadi 5 shares dengan threshold 3. Rekonstruksi dengan 3 atau 4 shares berhasil menghasilkan rahasia asli 12345, sedangkan dengan 2 shares gagal dan menghasilkan nilai yang salah.
 
-Hasil eksekusi program Caesar Cipher:
+Hasil eksekusi program:
 
-![Hasil Eksekusi](screenshots/output.png)
-![Hasil Input](screenshots/input.png)
-![Hasil Output](screenshots/output.png)
-)
+Original secret: 12345
+Generated 5 shares:
+  Share 1: 87254364536837207530427184603145647371
+  Share 2: 117675982380642833627114467685355332943
+  Share 3: 91264853531416878290061849246629069061
+  Share 4: 8020977989159341519269329286966855725
+  Share 5: 38085539214339455046424211522252798662
+
+Reconstructing with different combinations:
+With 3 shares [(1, 87254364536837207530427184603145647371), (2, 117675982380642833627114467685355332943), (3, 91264853531416878290061849246629069061)]: Reconstructed secret = 12345
+With 4 shares [(1, 87254364536837207530427184603145647371), (2, 117675982380642833627114467685355332943), (3, 91264853531416878290061849246629069061), (4, 8020977989159341519269329286966855725)]: Reconstructed secret = 12345
+With 2 shares [(1, 87254364536837207530427184603145647371), (2, 117675982380642833627114467685355332943)]: Reconstructed secret = 56832746693031581433739901520935961799 (incorrect)
+
+Hasil sesuai ekspektasi karena dengan k=3, minimal 3 shares diperlukan untuk rekonstruksi. Tidak ada error dalam eksekusi program.
+
+![Hasil Eksekusi](screenshots/hasil.png)
 
 ---
 
 ## 7. Jawaban Pertanyaan
-- Pertanyaan 1: Apa keuntungan utama dari Secret Sharing dibandingkan enkripsi biasa?  
-  Keuntungan utama adalah distribusi risiko - rahasia tidak disimpan di satu tempat saja, sehingga lebih tahan terhadap kompromi tunggal. Selain itu, tidak memerlukan kunci tambahan untuk dekripsi karena rekonstruksi dilakukan secara matematis.
+1. Apa keuntungan utama Shamir Secret Sharing dibanding membagikan salinan kunci secara langsung?
+   Keuntungan utama adalah distribusi risiko - rahasia tidak disimpan di satu tempat saja, sehingga lebih tahan terhadap kompromi tunggal. Selain itu, tidak memerlukan kunci tambahan untuk dekripsi karena rekonstruksi dilakukan secara matematis.
 
-- Pertanyaan 2: Mengapa Shamir's Secret Sharing menggunakan finite field arithmetic?  
-  Finite field arithmetic digunakan untuk memastikan operasi matematis (seperti invers modular) selalu terdefinisi dan hasilnya tetap dalam field yang terbatas. Ini mencegah masalah overflow dan memastikan keamanan kriptografis.
+2. Apa peran threshold (k) dalam keamanan secret sharing?
+   Threshold k menentukan jumlah minimum shares yang diperlukan untuk rekonstruksi rahasia. Jika k terlalu kecil, risiko keamanan meningkat karena lebih mudah dikompromi. Jika k terlalu besar, rekonstruksi menjadi sulit.
 
-- Pertanyaan 3: Bagaimana aplikasi praktis Secret Sharing dalam sistem keamanan?  
-  Secret Sharing dapat digunakan dalam sistem multi-signature untuk wallet cryptocurrency, distribusi kunci master dalam sistem perbankan, atau penyimpanan rahasia perusahaan di mana beberapa eksekutif harus menyetujui akses.
+3. Berikan satu contoh skenario nyata di mana SSS sangat bermanfaat.
+   Dalam sistem multi-signature untuk wallet cryptocurrency, di mana beberapa pihak harus menyetujui transaksi untuk mencegah pencurian dana.
+
 ---
 
 ## 8. Kesimpulan
-(Tuliskan kesimpulan singkat (2–3 kalimat) berdasarkan percobaan.  )
+Praktikum ini berhasil mendemonstrasikan implementasi Shamir Secret Sharing untuk membagi dan merekonstruksi rahasia. Program dapat membagi rahasia menjadi beberapa shares dan merekonstruksi dengan benar menggunakan interpolasi Lagrange. Teknik ini sangat berguna untuk meningkatkan keamanan dalam distribusi rahasia.
 
 ---
 
 ## 9. Daftar Pustaka
-- Shamir, A. (1979). How to share a secret. *Communications of the ACM*, 22(11), 612-613.
-- Stallings, W. (2017). *Cryptography and Network Security: Principles and Practice* (7th ed.). Pearson.
+- Shamir, A. (1979). How to share a secret. Communications of the ACM, 22(11), 612-613.
+- Stinson, D. R. (2019). Cryptography: Theory and Practice (4th ed.). CRC Press.
 
 ---
 
 ## 10. Commit Log
-(Tuliskan bukti commit Git yang relevan.  
-Contoh:
 ```
-commit abc12345
-Author: Nama Mahasiswa <email>
-Date:   2025-09-20
+commit [hash]
+Author: Jamaludin <jud2272@gmail.com>
+Date: [date]
 
-    week2-cryptosystem: implementasi Caesar Cipher dan laporan )
+week11-secret-sharing
 ```
