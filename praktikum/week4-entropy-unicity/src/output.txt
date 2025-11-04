@@ -1,0 +1,5 @@
+Entropy ruang kunci 26 = 4.700439718141093 bit
+Entropy ruang kunci 2^128 = 128.0 bit
+Unicity Distance untuk Caesar Cipher = 1.3333333333333333
+Waktu brute force Caesar Cipher (26 kunci) = 3.0092592592592593e-10 hari
+Waktu brute force AES-128 = 3.938453320844195e+27 hari
