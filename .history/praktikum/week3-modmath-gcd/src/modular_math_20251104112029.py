@@ -1,7 +1,7 @@
 def mod_add(a, b, n): return (a + b) % n
 def mod_sub(a, b, n): return (a - b) % n
 def mod_mul(a, b, n): return (a * b) % n
-def mod_exp(base, exp, n): return pow(base, exp, n)  
+def mod_exp(base, exp, n): return pow(base, exp, n)  # eksponensiasi modular
 
 print("7 + 5 mod 12 =", mod_add(7, 5, 12))
 print("7 * 5 mod 12 =", mod_mul(7, 5, 12))
@@ -29,8 +29,19 @@ def modinv(a, n):
 print("Invers 3 mod 11 =", modinv(3, 11))  # hasil: 4
 
 def discrete_log(a, b, n):
-    for x in range(n):
+for /*************  ✨ Windsurf Command ⭐  *************/
+    """
+    Find x such that a^x == b (mod n)
+    
+    Parameters
+    ----------
+    a : int
+        base
+    b : int
+
+/*******  07d9dedc-80b1-48c9-891f-c9a16c1a4fa4  *******/x in range(n):
         if pow(a, x, n) == b:
             return x
     return None
 
+print("3^x == 4 (mod 7), x =", discrete_log(3, 4, 7))  # hasil: 4
