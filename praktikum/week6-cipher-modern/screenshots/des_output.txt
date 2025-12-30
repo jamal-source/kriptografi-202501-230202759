@@ -1,0 +1,2 @@
+Ciphertext: b'\xe3\xf8\xe3\x1e\xae\xe54P'
+Decrypted: b'ABCDEFGH'
