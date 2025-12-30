@@ -1,0 +1,8 @@
+unci bersama Alice : 18
+Kunci bersama Bob   : 18
+
+--- Simulasi Serangan MITM ---
+Alice berpikir kunci bersama dengan Bob: 16
+Bob berpikir kunci bersama dengan Alice: 2
+Eve mengetahui kunci Alice: 16
+Eve mengetahui kunci Bob: 2
