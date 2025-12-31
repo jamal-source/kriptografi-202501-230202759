@@ -1,6 +1,6 @@
 # Laporan Praktikum Kriptografi
-Minggu ke-: X  
-Topik: [judul praktikum]  
+Minggu ke-: 12
+Topik: Aplikasi TLS
 Nama: [Nama Mahasiswa]  
 NIM: [NIM Mahasiswa]  
 Kelas: [Kelas]  
@@ -82,7 +82,7 @@ Hasil eksekusi program Caesar Cipher:
 ---
 
 ## 8. Kesimpulan
-(Tuliskan kesimpulan singkat (2–3 kalimat) berdasarkan percobaan.  )
+Praktikum ini berhasil menganalisis penerapan TLS dalam komunikasi digital, khususnya pada email dan e-commerce. Melalui studi kasus, mahasiswa memahami pentingnya sertifikat digital dan enkripsi dalam melindungi transaksi online. Analisis etika menunjukkan bahwa kriptografi memberikan keseimbangan antara privasi individu dan kebutuhan pengawasan keamanan nasional.
 
 ---
 
