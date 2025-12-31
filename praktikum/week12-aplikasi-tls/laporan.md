@@ -8,13 +8,19 @@ Kelas: [Kelas]
 ---
 
 ## 1. Tujuan
-(Tuliskan tujuan pembelajaran praktikum sesuai modul.)
+Setelah mengikuti praktikum ini, mahasiswa diharapkan mampu:
+1. Menganalisis penggunaan kriptografi pada email dan SSL/TLS.
+2. Menjelaskan enkripsi dalam transaksi e-commerce.
+3. Mengevaluasi isu etika & privasi dalam penggunaan kriptografi di kehidupan sehari-hari.
 
 ---
 
 ## 2. Dasar Teori
-(Ringkas teori relevan (cukup 2–3 paragraf).  
-Contoh: definisi cipher klasik, konsep modular aritmetika, dll.  )
+Transport Layer Security (TLS) adalah protokol kriptografi yang menyediakan komunikasi aman melalui jaringan komputer. TLS menggantikan SSL (Secure Sockets Layer) dan digunakan untuk mengamankan koneksi HTTP menjadi HTTPS, email, dan aplikasi lainnya. TLS menggunakan kombinasi kriptografi simetris dan asimetris untuk autentikasi, kerahasiaan, dan integritas data.
+
+Dalam e-commerce, TLS melindungi transaksi online dengan mengenkripsi data sensitif seperti informasi kartu kredit dan detail pembayaran. Protokol ini menggunakan sertifikat digital untuk memverifikasi identitas server, mencegah serangan man-in-the-middle. TLS juga mendukung berbagai cipher suite yang dapat disesuaikan berdasarkan kebutuhan keamanan.
+
+Email terenkripsi menggunakan protokol seperti S/MIME atau PGP yang mengintegrasikan kriptografi asimetris untuk tanda tangan digital dan enkripsi pesan. Ini memastikan bahwa email tidak dapat dibaca oleh pihak yang tidak berwenang dan memverifikasi keaslian pengirim.
 
 ---
 
@@ -27,11 +33,12 @@ Contoh: definisi cipher klasik, konsep modular aritmetika, dll.  )
 ---
 
 ## 4. Langkah Percobaan
-(Tuliskan langkah yang dilakukan sesuai instruksi.  
-Contoh format:
-1. Membuat file `caesar_cipher.py` di folder `praktikum/week2-cryptosystem/src/`.
-2. Menyalin kode program dari panduan praktikum.
-3. Menjalankan program dengan perintah `python caesar_cipher.py`.)
+1. Membuka browser dan mengakses website e-commerce (tokopedia.com, shopee.co.id).
+2. Mengklik ikon gembok di address bar untuk melihat detail sertifikat SSL/TLS.
+3. Mencatat informasi sertifikat: issuer CA, masa berlaku, algoritma enkripsi.
+4. Membandingkan website dengan HTTPS dan tanpa HTTPS.
+5. Mengamati proses login dan transaksi untuk melihat penggunaan enkripsi.
+6. Menganalisis isu privasi dan etika terkait penggunaan kriptografi.
 
 ---
 
@@ -64,10 +71,14 @@ Hasil eksekusi program Caesar Cipher:
 ---
 
 ## 7. Jawaban Pertanyaan
-(Jawab pertanyaan diskusi yang diberikan pada modul.  
-- Pertanyaan 1: …  
-- Pertanyaan 2: …  
-)
+- Pertanyaan 1: Apa perbedaan utama antara HTTP dan HTTPS?
+  HTTP mengirim data dalam bentuk plain text yang rentan dicegat, sedangkan HTTPS menggunakan TLS untuk mengenkripsi data, memastikan kerahasiaan dan integritas komunikasi.
+
+- Pertanyaan 2: Mengapa sertifikat digital menjadi penting dalam komunikasi TLS?
+  Sertifikat digital memverifikasi identitas server melalui tanda tangan CA terpercaya, mencegah serangan man-in-the-middle dan memastikan bahwa kunci publik yang diterima benar-benar milik entitas yang sah.
+
+- Pertanyaan 3: Bagaimana kriptografi mendukung privasi dalam komunikasi digital, tetapi sekaligus menimbulkan tantangan hukum dan etika?
+  Kriptografi melindungi privasi dengan mengenkripsi data sensitif, namun menimbulkan dilema etika ketika digunakan untuk kegiatan ilegal. Pemerintah sering meminta backdoor untuk pengawasan, yang bertentangan dengan hak privasi individu.
 ---
 
 ## 8. Kesimpulan
@@ -76,10 +87,8 @@ Hasil eksekusi program Caesar Cipher:
 ---
 
 ## 9. Daftar Pustaka
-(Cantumkan referensi yang digunakan.  
-Contoh:  
-- Katz, J., & Lindell, Y. *Introduction to Modern Cryptography*.  
-- Stallings, W. *Cryptography and Network Security*.  )
+- Stallings, W. (2017). *Cryptography and Network Security: Principles and Practice* (7th ed.). Pearson.
+- Rescorla, E. (2018). *The Transport Layer Security (TLS) Protocol Version 1.3*. RFC 8446.
 
 ---
 
