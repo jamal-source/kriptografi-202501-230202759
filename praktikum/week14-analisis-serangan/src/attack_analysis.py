@@ -3,7 +3,7 @@ import collections
 
 def caesar_brute_force(ciphertext, max_shift=25):
     """
-    Perform brute force attack on Caesar cipher
+    Melakukan serangan brute force pada cipher Caesar
     """
     results = []
     for shift in range(max_shift + 1):
@@ -19,7 +19,7 @@ def caesar_brute_force(ciphertext, max_shift=25):
 
 def frequency_analysis(text):
     """
-    Perform frequency analysis on text
+    Melakukan analisis frekuensi pada teks
     """
     text = text.upper()
     freq = collections.Counter(c for c in text if c.isalpha())
@@ -29,7 +29,7 @@ def frequency_analysis(text):
 
 def vigenere_attack(ciphertext, key_length):
     """
-    Attempt to break Vigenere cipher with known key length
+    Mencoba memecahkan cipher Vigenere dengan panjang kunci diketahui
     """
     ciphertext = ciphertext.upper()
     groups = ['' for _ in range(key_length)]
@@ -37,15 +37,15 @@ def vigenere_attack(ciphertext, key_length):
         if char.isalpha():
             groups[i % key_length] += char
 
-    # Frequency analysis for each group
+    # Analisis frekuensi untuk setiap grup
     group_freqs = [frequency_analysis(group) for group in groups]
 
-    # Guess key based on most frequent letter (assuming 'E' is most common)
+    # Tebak kunci berdasarkan huruf yang paling sering muncul (mengasumsikan 'E' paling umum)
     key = ""
     for freq in group_freqs:
         if freq:
             most_common = max(freq, key=freq.get)
-            # Assuming 'E' is most common, shift = (most_common - 'E') % 26
+            # Mengasumsikan 'E' paling umum, shift = (most_common - 'E') % 26
             shift = (ord(most_common) - ord('E')) % 26
             key += chr(shift + ord('A'))
         else:
@@ -53,25 +53,25 @@ def vigenere_attack(ciphertext, key_length):
 
     return key, group_freqs
 
-# Example usage
+# Contoh penggunaan
 if __name__ == "__main__":
-    # Caesar cipher example
+    # Contoh cipher Caesar
     caesar_ciphertext = "WKLV LV D VHFUHW PHVVDJH"
-    print("Caesar Cipher Brute Force:")
+    print("Serangan Brute Force Caesar Cipher:")
     caesar_results = caesar_brute_force(caesar_ciphertext)
-    for shift, plaintext in caesar_results[:5]:  # Show first 5
+    for shift, plaintext in caesar_results[:5]:  # Tampilkan 5 pertama
         print(f"Shift {shift}: {plaintext}")
 
-    # Frequency analysis example
+    # Contoh analisis frekuensi
     sample_text = "THIS IS A SAMPLE TEXT FOR FREQUENCY ANALYSIS"
-    print("\nFrequency Analysis:")
+    print("\nAnalisis Frekuensi:")
     freq = frequency_analysis(sample_text)
     for char, percent in freq.items():
         print(f"{char}: {percent:.2f}%")
 
-    # Vigenere attack example
+    # Contoh serangan Vigenere
     vigenere_ciphertext = "WKLVLVDFLSKHUBWH[W"
     key_length = 3
-    print(f"\nVigenere Attack (key length {key_length}):")
+    print(f"\nSerangan Vigenere (panjang kunci {key_length}):")
     guessed_key, group_freqs = vigenere_attack(vigenere_ciphertext, key_length)
-    print(f"Guessed key: {guessed_key}")
+    print(f"Kunci yang diperkirakan: {guessed_key}")
