@@ -1,3 +1,0 @@
-Plaintext : CLASSIC CIPHER
-Ciphertext: FODVVLF FLSKHU
-Decrypted : CLASSIC CIPHER

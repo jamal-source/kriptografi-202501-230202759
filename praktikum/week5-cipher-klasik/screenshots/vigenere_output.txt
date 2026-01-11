@@ -1,3 +1,0 @@
-Plaintext : KRIPTOGRAFI
-Ciphertext: UVGZXMQVYPM
-Decrypted : KRIPTOGRAFI
