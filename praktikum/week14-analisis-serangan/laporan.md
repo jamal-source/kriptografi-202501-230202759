@@ -1,6 +1,6 @@
 # Laporan Praktikum Kriptografi
 Minggu ke-: 14
-Topik: Analisis Serangan
+Topik: Analisis Serangan Kriptografi
 Nama: Jamaludin
 NIM: 230202759
 Kelas: 5IKRB
@@ -9,19 +9,24 @@ Kelas: 5IKRB
 
 ## 1. Tujuan
 Setelah mengikuti praktikum ini, mahasiswa diharapkan mampu:
-1. Menganalisis berbagai jenis serangan terhadap sistem kriptografi.
-2. Melakukan simulasi serangan brute force pada cipher klasik.
-3. Memahami analisis frekuensi dan aplikasinya dalam kriptoanalisis.
-4. Mengevaluasi keamanan cipher modern terhadap serangan umum.
+1. Mengidentifikasi jenis serangan pada sistem informasi nyata.
+2. Mengevaluasi kelemahan algoritma kriptografi yang digunakan.
+3. Memberikan rekomendasi algoritma kriptografi yang sesuai untuk perbaikan keamanan.
 
 ---
 
 ## 2. Dasar Teori
-Serangan terhadap sistem kriptografi dapat diklasifikasikan menjadi beberapa jenis: brute force, analisis frekuensi, known-plaintext attack, chosen-plaintext attack, dan ciphertext-only attack. Brute force mencoba semua kemungkinan kunci, sementara analisis frekuensi memanfaatkan distribusi huruf dalam bahasa alami.
+Serangan terhadap sistem kriptografi dapat diklasifikasikan berdasarkan vektor serangan: brute force, cryptanalysis, implementation flaws, protocol weaknesses, dll.
 
-Cipher klasik seperti Caesar dan Vigenere rentan terhadap serangan ini karena ruang kunci yang kecil. Caesar cipher hanya memiliki 25 kemungkinan kunci, sehingga brute force sangat efektif. Vigenere cipher lebih kuat tetapi dapat dipecahkan dengan analisis frekuensi jika panjang kunci diketahui.
+Brute force mencoba semua kemungkinan kunci, efektif pada kunci pendek.
 
-Cipher modern seperti AES dan RSA dirancang untuk tahan terhadap serangan ini, menggunakan kunci panjang dan algoritma kompleks. Namun, implementasi yang buruk atau penggunaan kunci lemah masih dapat membuat sistem rentan.
+Cryptanalysis memanfaatkan kelemahan matematis algoritma.
+
+Implementation flaws seperti buffer overflow, side-channel attacks.
+
+Protocol weaknesses seperti man-in-the-middle, replay attacks.
+
+Cipher klasik rentan brute force, cipher modern rentan jika kunci lemah atau implementasi buruk.
 
 ---
 
