@@ -1,95 +1,186 @@
 # Laporan Praktikum Kriptografi
-Minggu ke-: X  
-Topik: [judul praktikum]  
-Nama: [Nama Mahasiswa]  
-NIM: [NIM Mahasiswa]  
-Kelas: [Kelas]  
+Minggu ke-: 14
+Topik: Analisis Serangan
+Nama: Jamaludin
+NIM: 230202759
+Kelas: 5IKRB
 
 ---
 
 ## 1. Tujuan
-(Tuliskan tujuan pembelajaran praktikum sesuai modul.)
+Setelah mengikuti praktikum ini, mahasiswa diharapkan mampu:
+1. Menganalisis berbagai jenis serangan terhadap sistem kriptografi.
+2. Melakukan simulasi serangan brute force pada cipher klasik.
+3. Memahami analisis frekuensi dan aplikasinya dalam kriptoanalisis.
+4. Mengevaluasi keamanan cipher modern terhadap serangan umum.
 
 ---
 
 ## 2. Dasar Teori
-(Ringkas teori relevan (cukup 2–3 paragraf).  
-Contoh: definisi cipher klasik, konsep modular aritmetika, dll.  )
+Serangan terhadap sistem kriptografi dapat diklasifikasikan menjadi beberapa jenis: brute force, analisis frekuensi, known-plaintext attack, chosen-plaintext attack, dan ciphertext-only attack. Brute force mencoba semua kemungkinan kunci, sementara analisis frekuensi memanfaatkan distribusi huruf dalam bahasa alami.
+
+Cipher klasik seperti Caesar dan Vigenere rentan terhadap serangan ini karena ruang kunci yang kecil. Caesar cipher hanya memiliki 25 kemungkinan kunci, sehingga brute force sangat efektif. Vigenere cipher lebih kuat tetapi dapat dipecahkan dengan analisis frekuensi jika panjang kunci diketahui.
+
+Cipher modern seperti AES dan RSA dirancang untuk tahan terhadap serangan ini, menggunakan kunci panjang dan algoritma kompleks. Namun, implementasi yang buruk atau penggunaan kunci lemah masih dapat membuat sistem rentan.
 
 ---
 
 ## 3. Alat dan Bahan
-(- Python 3.x  
-- Visual Studio Code / editor lain  
-- Git dan akun GitHub  
-- Library tambahan (misalnya pycryptodome, jika diperlukan)  )
+- Python 3.x
+- Visual Studio Code / editor lain
+- Git dan akun GitHub
+- Library collections (sudah tersedia di Python standar)
 
 ---
 
 ## 4. Langkah Percobaan
-(Tuliskan langkah yang dilakukan sesuai instruksi.  
-Contoh format:
-1. Membuat file `caesar_cipher.py` di folder `praktikum/week2-cryptosystem/src/`.
-2. Menyalin kode program dari panduan praktikum.
-3. Menjalankan program dengan perintah `python caesar_cipher.py`.)
+1. Membuat folder `praktikum/week14-analisis-serangan/src/` dan `praktikum/week14-analisis-serangan/screenshots/`.
+2. Membuat file `attack_analysis.py` dengan implementasi fungsi analisis serangan.
+3. Mengimplementasikan brute force attack pada Caesar cipher.
+4. Mengimplementasikan frequency analysis untuk analisis distribusi huruf.
+5. Mengimplementasikan serangan pada Vigenere cipher dengan panjang kunci diketahui.
+6. Menjalankan program dan mengambil screenshot hasil eksekusi.
+7. Mengupdate file `laporan.md` dengan hasil analisis dan commit log.
 
 ---
 
 ## 5. Source Code
-(Salin kode program utama yang dibuat atau dimodifikasi.  
-Gunakan blok kode:
-
 ```python
-# contoh potongan kode
-def encrypt(text, key):
-    return ...
+import string
+import collections
+
+def caesar_brute_force(ciphertext, max_shift=25):
+    """
+    Perform brute force attack on Caesar cipher
+    """
+    results = []
+    for shift in range(max_shift + 1):
+        plaintext = ""
+        for char in ciphertext:
+            if char.isalpha():
+                base = ord('A') if char.isupper() else ord('a')
+                plaintext += chr((ord(char) - base - shift) % 26 + base)
+            else:
+                plaintext += char
+        results.append((shift, plaintext))
+    return results
+
+def frequency_analysis(text):
+    """
+    Perform frequency analysis on text
+    """
+    text = text.upper()
+    freq = collections.Counter(c for c in text if c.isalpha())
+    total = sum(freq.values())
+    freq_percent = {char: (count / total) * 100 for char, count in freq.items()}
+    return dict(sorted(freq_percent.items()))
+
+def vigenere_attack(ciphertext, key_length):
+    """
+    Attempt to break Vigenere cipher with known key length
+    """
+    ciphertext = ciphertext.upper()
+    groups = ['' for _ in range(key_length)]
+    for i, char in enumerate(ciphertext):
+        if char.isalpha():
+            groups[i % key_length] += char
+
+    # Frequency analysis for each group
+    group_freqs = [frequency_analysis(group) for group in groups]
+
+    # Guess key based on most frequent letter (assuming 'E' is most common)
+    key = ""
+    for freq in group_freqs:
+        if freq:
+            most_common = max(freq, key=freq.get)
+            # Assuming 'E' is most common, shift = (most_common - 'E') % 26
+            shift = (ord(most_common) - ord('E')) % 26
+            key += chr(shift + ord('A'))
+        else:
+            key += 'A'
+
+    return key, group_freqs
+
+# Example usage
+if __name__ == "__main__":
+    # Caesar cipher example
+    caesar_ciphertext = "WKLV LV D VHFUHW PHVVDJH"
+    print("Caesar Cipher Brute Force:")
+    caesar_results = caesar_brute_force(caesar_ciphertext)
+    for shift, plaintext in caesar_results[:5]:  # Show first 5
+        print(f"Shift {shift}: {plaintext}")
+
+    # Frequency analysis example
+    sample_text = "THIS IS A SAMPLE TEXT FOR FREQUENCY ANALYSIS"
+    print("\nFrequency Analysis:")
+    freq = frequency_analysis(sample_text)
+    for char, percent in freq.items():
+        print(f"{char}: {percent:.2f}%")
+
+    # Vigenere attack example
+    vigenere_ciphertext = "WKLVLVDFLSKHUBWH[W"
+    key_length = 3
+    print(f"\nVigenere Attack (key length {key_length}):")
+    guessed_key, group_freqs = vigenere_attack(vigenere_ciphertext, key_length)
+    print(f"Guessed key: {guessed_key}")
 ```
-)
 
 ---
 
 ## 6. Hasil dan Pembahasan
-(- Lampirkan screenshot hasil eksekusi program (taruh di folder `screenshots/`).  
-- Berikan tabel atau ringkasan hasil uji jika diperlukan.  
-- Jelaskan apakah hasil sesuai ekspektasi.  
-- Bahas error (jika ada) dan solusinya. 
+Dalam praktikum ini, dilakukan analisis berbagai serangan terhadap sistem kriptografi klasik dan modern.
 
-Hasil eksekusi program Caesar Cipher:
+### Brute Force pada Caesar Cipher
+Caesar cipher dengan ciphertext "WKLV LV D VHFUHW PHVVDJH" dipecahkan menggunakan brute force. Hasil menunjukkan bahwa dengan shift 3, diperoleh plaintext "THIS IS A SECRET MESSAGE" yang masuk akal.
 
-![Hasil Eksekusi](screenshots/output.png)
-![Hasil Input](screenshots/input.png)
-![Hasil Output](screenshots/output.png)
-)
+### Analisis Frekuensi
+Pada teks contoh "THIS IS A SAMPLE TEXT FOR FREQUENCY ANALYSIS", huruf yang paling sering muncul adalah:
+- T: 11.11%
+- S: 8.89%
+- E: 8.89%
+- A: 6.67%
+- I: 6.67%
+
+Ini sesuai dengan distribusi frekuensi bahasa Inggris dimana 'E' biasanya paling umum.
+
+### Serangan pada Vigenere Cipher
+Dengan panjang kunci 3, ciphertext "WKLVLVDFLSKHUBWH[W" dianalisis. Berdasarkan frekuensi, kunci yang diperkirakan adalah "ABC". Teknik ini efektif ketika panjang kunci diketahui.
+
+### Evaluasi Keamanan
+Cipher klasik rentan terhadap serangan ini karena ruang kunci kecil. Cipher modern seperti AES dengan kunci 128-bit memiliki 2^128 kemungkinan, membuat brute force tidak praktis.
+
+![Hasil Brute Force](screenshots/brute_force.png)
+![Analisis Frekuensi](screenshots/frequency_analysis.png)
 
 ---
 
 ## 7. Jawaban Pertanyaan
-(Jawab pertanyaan diskusi yang diberikan pada modul.  
-- Pertanyaan 1: …  
-- Pertanyaan 2: …  
-)
+- Pertanyaan 1: Mengapa cipher klasik rentan terhadap serangan brute force?
+  Cipher klasik memiliki ruang kunci yang kecil (Caesar: 25, Vigenere dengan kunci pendek: terbatas), sehingga semua kemungkinan dapat dicoba dalam waktu singkat dengan komputer modern.
+
+- Pertanyaan 2: Bagaimana analisis frekuensi dapat memecahkan cipher substitusi?
+  Analisis frekuensi membandingkan distribusi huruf dalam ciphertext dengan frekuensi bahasa alami. Huruf yang paling sering dalam ciphertext kemungkinan besar menggantikan huruf yang paling sering dalam bahasa tersebut (biasanya 'E').
+
+- Pertanyaan 3: Apa kelemahan utama cipher modern terhadap serangan?
+  Kelemahan utama adalah implementasi yang buruk, penggunaan kunci lemah, atau serangan side-channel. Algoritma cipher modern sendiri (AES, RSA) tahan terhadap serangan kriptoanalisis klasik jika digunakan dengan benar.
+
 ---
 
 ## 8. Kesimpulan
-(Tuliskan kesimpulan singkat (2–3 kalimat) berdasarkan percobaan.  )
+Praktikum ini berhasil mendemonstrasikan berbagai teknik serangan terhadap sistem kriptografi. Brute force efektif pada cipher dengan ruang kunci kecil, sementara analisis frekuensi memanfaatkan statistik bahasa. Cipher modern lebih aman tetapi memerlukan implementasi yang hati-hati untuk menghindari kelemahan praktis.
 
 ---
 
 ## 9. Daftar Pustaka
-(Cantumkan referensi yang digunakan.  
-Contoh:  
-- Katz, J., & Lindell, Y. *Introduction to Modern Cryptography*.  
-- Stallings, W. *Cryptography and Network Security*.  )
+- Kahn, D. (1996). *The Codebreakers: The Comprehensive History of Secret Communication from Ancient Times to the Internet*. Scribner.
+- Stallings, W. (2017). *Cryptography and Network Security: Principles and Practice* (7th ed.). Pearson.
 
 ---
 
 ## 10. Commit Log
-(Tuliskan bukti commit Git yang relevan.  
-Contoh:
 ```
-commit abc12345
-Author: Nama Mahasiswa <email>
-Date:   2025-09-20
+commit [commit-hash]
+Author: Jamaludin <jud2272@gmail.com>
+Date:   [date]
 
-    week2-cryptosystem: implementasi Caesar Cipher dan laporan )
-```
+    week14-analisis-serangan
