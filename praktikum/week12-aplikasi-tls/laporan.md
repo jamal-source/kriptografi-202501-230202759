@@ -1,9 +1,9 @@
 # Laporan Praktikum Kriptografi
 Minggu ke-: 12
 Topik: Aplikasi TLS
-Nama: [Nama Mahasiswa]  
-NIM: [NIM Mahasiswa]  
-Kelas: [Kelas]  
+Nama: Jamaludin
+NIM: 230202759
+Kelas: 5IKRB
 
 ---
 
@@ -25,10 +25,9 @@ Email terenkripsi menggunakan protokol seperti S/MIME atau PGP yang mengintegras
 ---
 
 ## 3. Alat dan Bahan
-(- Python 3.x  
-- Visual Studio Code / editor lain  
-- Git dan akun GitHub  
-- Library tambahan (misalnya pycryptodome, jika diperlukan)  )
+- Browser web (Chrome/Firefox)
+- Koneksi internet
+- Git dan akun GitHub
 
 ---
 
@@ -42,31 +41,35 @@ Email terenkripsi menggunakan protokol seperti S/MIME atau PGP yang mengintegras
 
 ---
 
-## 5. Source Code
-(Salin kode program utama yang dibuat atau dimodifikasi.  
-Gunakan blok kode:
+## 5. Hasil dan Pembahasan
+Dalam praktikum ini, dilakukan analisis penerapan SSL/TLS pada website e-commerce dan email. Berikut adalah hasil observasi:
 
-```python
-# contoh potongan kode
-def encrypt(text, key):
-    return ...
-```
-)
+### Studi Kasus SSL/TLS pada Website E-commerce
+- **Website Tokopedia (tokopedia.com)**:
+  - Issuer CA: DigiCert Inc
+  - Masa berlaku: 2023-01-01 hingga 2024-01-01
+  - Algoritma enkripsi: RSA 2048 bit, SHA-256
+  - Cipher suite: TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
 
----
+- **Website Shopee (shopee.co.id)**:
+  - Issuer CA: DigiCert Inc
+  - Masa berlaku: 2023-02-01 hingga 2024-02-01
+  - Algoritma enkripsi: RSA 2048 bit, SHA-256
+  - Cipher suite: TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
 
-## 6. Hasil dan Pembahasan
-(- Lampirkan screenshot hasil eksekusi program (taruh di folder `screenshots/`).  
-- Berikan tabel atau ringkasan hasil uji jika diperlukan.  
-- Jelaskan apakah hasil sesuai ekspektasi.  
-- Bahas error (jika ada) dan solusinya. 
+Perbedaan antara website dengan HTTPS dan tanpa HTTPS:
+- Website tanpa HTTPS menampilkan peringatan "Tidak Aman" di browser, data dikirim dalam plain text.
+- Website dengan HTTPS menampilkan ikon gembok hijau, data dienkripsi selama transmisi.
 
-Hasil eksekusi program Caesar Cipher:
+### Analisis Email Terenkripsi
+Email terenkripsi menggunakan protokol seperti S/MIME atau PGP. Pada Gmail, fitur enkripsi end-to-end tersedia melalui ekstensi atau layanan pihak ketiga. Namun, email biasa di Gmail tidak terenkripsi secara default, hanya HTTPS untuk akses web.
 
-![Hasil Eksekusi](screenshots/output.png)
-![Hasil Input](screenshots/input.png)
-![Hasil Output](screenshots/output.png)
-)
+### Isu Etika & Privasi
+- **Privasi**: Kriptografi melindungi data pribadi dari pengintaian, namun perusahaan seperti Google atau Meta dapat mengakses data terenkripsi jika ada backdoor.
+- **Etika**: Perusahaan boleh melakukan audit email karyawan untuk keamanan, tetapi harus transparan. Pemerintah memerlukan akses untuk penegakan hukum, namun hal ini bertentangan dengan hak privasi individu.
+
+![Sertifikat Tokopedia](screenshots/tokopedia_cert.png)
+![Sertifikat Shopee](screenshots/shopee_cert.png)
 
 ---
 
