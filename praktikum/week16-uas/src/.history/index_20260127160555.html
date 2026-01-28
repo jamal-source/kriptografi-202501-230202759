@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KoinAllIn (AIC) DApp</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .balance {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2E8B57;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🪙 KoinAllIn (AIC) DApp</h1>
+
+        <div class="section">
+            <h2>🔗 Connect Wallet</h2>
+            <button id="connectButton">Connect MetaMask</button>
+            <p id="accountAddress"></p>
+        </div>
+
+        <div class="section">
+            <h2>💰 Token Balance</h2>
+            <button id="checkBalance">Check Balance</button>
+            <p class="balance" id="balanceDisplay">Balance: 0 AIC</p>
+        </div>
+
+        <div class="section">
+            <h2>💸 Transfer Tokens</h2>
+            <input type="text" id="transferAddress" placeholder="Recipient Address">
+            <input type="number" id="transferAmount" placeholder="Amount (AIC)">
+            <button id="transferButton">Transfer</button>
+            <p id="transferStatus"></p>
+        </div>
+
+        <div class="section">
+            <h2>🔥 Burn Tokens</h2>
+            <input type="number" id="burnAmount" placeholder="Amount to Burn (AIC)">
+            <button id="burnButton">Burn Tokens</button>
+            <p id="burnStatus"></p>
+        </div>
+
+        <div class="section">
+            <h2>🎯 Stake Tokens</h2>
+            <input type="number" id="stakeAmount" placeholder="Amount to Stake (AIC)">
+            <button id="stakeButton">Stake</button>
+            <p id="stakeStatus"></p>
+        </div>
+
+        <div class="section">
+            <h2>📈 Staking Info</h2>
+            <button id="checkStake">Check My Stake</button>
+            <p id="stakeDisplay">My Stake: 0 AIC</p>
+            <button id="withdrawStake">Withdraw Stake</button>
+            <input type="number" id="withdrawAmount" placeholder="Amount to Withdraw">
+            <p id="withdrawStatus"></p>
+        </div>
+
+        <div class="section">
+            <h2>🏆 Rewards</h2>
+            <button id="checkReward">Check Reward</button>
+            <p id="rewardDisplay">Reward: 0 AIC</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
+    <script>
+        let web3;
+        let contract;
+        let account;
+
+        // Contract ABI (simplified for main functions)
+        const contractABI = [
+            {
+                "inputs": [{"internalType": "uint256", "name": "pasokanAwal", "type": "uint256"}],
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "inputs": [{"internalType": "address", "name": "", "type": "address"}],
+                "name": "saldoDari",
+                "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [{"internalType": "address", "name": "ke", "type": "address"}, {"internalType": "uint256", "name": "nilai", "type": "uint256"}],
+                "name": "kirim",
+                "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [{"internalType": "uint256", "name": "nilai", "type": "uint256"}],
+                "name": "bakar",
+                "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [{"internalType": "uint256", "name": "nilai", "type": "uint256"}],
+                "name": "taruh",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [{"internalType": "uint256", "name": "nilai", "type": "uint256"}],
+                "name": "tarikTaruhan",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "dapatkanReward",
+                "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [{"internalType": "address", "name": "", "type": "address"}],
+                "name": "taruhan",
+                "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ];
+
+        
+        const contractAddress = '0x31918bc13e9bd9cd35eb6d4778f58a645020d7fc'; 
+        const infuraUrl = 'https://mainnet.infura.io/v3/261bec05d5784f4daf4668789aa11424'; //  Infura endpoint
+
+        async function initWeb3() {
+            try {
+                if (typeof window.ethereum !== 'undefined') {
+                    // Use MetaMask if available
+                    web3 = new Web3(window.ethereum);
+                    console.log('Connected to MetaMask');
+                } else {
+                    // Fallback to Infura for read-only operations
+                    web3 = new Web3(new Web3.providers.HttpProvider(infuraUrl));
+                    console.log('Connected to Infura (read-only mode)');
+                    alert('MetaMask not detected. Connected to Infura in read-only mode. You can check balances but cannot perform transactions.');
+                }
+
+                // Initialize contract
+                if (contractAddress && contractAddress !== '0x31918bc13e9bd9cd35eb6d4778f58a645020d7fc' && contractAddress !== '0x31918bc13e9bd9cd35eb6d4778f58a645020d7fc0x31918bc13e9bd9cd35eb6d4778f58a645020d7fc') {
+                    contract = new web3.eth.Contract(contractABI, contractAddress);
+                    console.log('Contract initialized with address:', contractAddress);
+                } else {
+                    console.warn('Contract address is placeholder - contract not initialized');
+                    contract = null;
+                }
+            } catch (error) {
+                console.error('Web3 initialization error:', error);
+                alert('Failed to initialize Web3. Please refresh the page and try again.');
+            }
+        }
+
+        async function connectWallet() {
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                account = accounts[0];
+                document.getElementById('accountAddress').textContent = `Connected: ${account}`;
+                document.getElementById('connectButton').textContent = 'Connected';
+            } catch (error) {
+                console.error(error);
+                alert('Failed to connect wallet');
+            }
+        }
+
+        async function checkBalance() {
+            if (!account) {
+                alert('Please connect your wallet first');
+                return;
+            }
+            if (!contract) {
+                alert('Contract belum diinisialisasi! Contract address mungkin placeholder atau tidak valid.');
+                document.getElementById('balanceDisplay').textContent = 'Balance: Contract tidak diinisialisasi';
+                return;
+            }
+            if (!contractAddress || contractAddress === '0x31918bc13e9bd9cd35eb6d4778f58a645020d7fc' || contractAddress === '0x31918bc13e9bd9cd35eb6d4778f58a645020d7fc') {
+                alert('Contract belum di-deploy! Silakan deploy kontrak KoinAllIn ke mainnet terlebih dahulu dan update contract address di kode.');
+                document.getElementById('balanceDisplay').textContent = 'Balance: Contract belum di-deploy';
+                return;
+            }
+            try {
+                console.log('Checking balance for account:', account);
+                console.log('Contract address:', contractAddress);
+                console.log('Contract object:', contract);
+                const balance = await contract.methods.saldoDari(account).call();
+                console.log('Raw balance:', balance);
+                const balanceInAIC = web3.utils.fromWei(balance, 'ether');
+                console.log('Balance in AIC:', balanceInAIC);
+                document.getElementById('balanceDisplay').textContent = `Balance: ${balanceInAIC} AIC`;
+            } catch (error) {
+                console.error('Balance check error:', error);
+                let errorMessage = 'Failed to check balance. ';
+                if (error.message.includes('network')) {
+                    errorMessage += 'Network error - check your connection.';
+                } else if (error.message.includes('contract')) {
+                    errorMessage += 'Contract error - address mungkin salah.';
+                } else if (error.message.includes('Cannot read properties')) {
+                    errorMessage += 'Contract object error - coba refresh halaman.';
+                } else {
+                    errorMessage += error.message;
+                }
+                alert(errorMessage);
+                document.getElementById('balanceDisplay').textContent = 'Balance: Error - ' + error.message.substring(0, 50);
+            }
+        }
+
+        async function transferTokens() {
+            if (!account) {
+                alert('Please connect your wallet first');
+                return;
+            }
+            if (typeof window.ethereum === 'undefined') {
+                alert('MetaMask is required for transactions. Please install MetaMask.');
+                return;
+            }
+
+            const recipient = document.getElementById('transferAddress').value;
+            const amount = document.getElementById('transferAmount').value;
+
+            if (!recipient || !amount) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            if (!web3.utils.isAddress(recipient)) {
+                alert('Please enter a valid Ethereum address');
+                return;
+            }
+
+            try {
+                const amountInWei = web3.utils.toWei(amount, 'ether');
+                const result = await contract.methods.kirim(recipient, amountInWei).send({ from: account });
+                document.getElementById('transferStatus').textContent = 'Transfer successful!';
+                document.getElementById('transferStatus').className = 'success';
+                checkBalance(); // Update balance
+            } catch (error) {
+                console.error(error);
+                document.getElementById('transferStatus').textContent = 'Transfer failed: ' + error.message;
+                document.getElementById('transferStatus').className = 'error';
+            }
+        }
+
+        async function burnTokens() {
+            if (!account) {
+                alert('Please connect your wallet first');
+                return;
+            }
+            if (typeof window.ethereum === 'undefined') {
+                alert('MetaMask is required for transactions. Please install MetaMask.');
+                return;
+            }
+
+            const amount = document.getElementById('burnAmount').value;
+
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid amount to burn');
+                return;
+            }
+
+            try {
+                const amountInWei = web3.utils.toWei(amount, 'ether');
+                const result = await contract.methods.bakar(amountInWei).send({ from: account });
+                document.getElementById('burnStatus').textContent = 'Burn successful!';
+                document.getElementById('burnStatus').className = 'success';
+                checkBalance(); // Update balance
+            } catch (error) {
+                console.error(error);
+                document.getElementById('burnStatus').textContent = 'Burn failed: ' + error.message;
+                document.getElementById('burnStatus').className = 'error';
+            }
+        }
+
+        async function stakeTokens() {
+            const amount = document.getElementById('stakeAmount').value;
+
+            if (!amount) {
+                alert('Please enter amount to stake');
+                return;
+            }
+
+            try {
+                const amountInWei = web3.utils.toWei(amount, 'ether');
+                const result = await contract.methods.taruh(amountInWei).send({ from: account });
+                document.getElementById('stakeStatus').textContent = 'Stake successful!';
+                document.getElementById('stakeStatus').className = 'success';
+                checkBalance(); // Update balance
+                checkStake(); // Update stake
+            } catch (error) {
+                console.error(error);
+                document.getElementById('stakeStatus').textContent = 'Stake failed';
+                document.getElementById('stakeStatus').className = 'error';
+            }
+        }
+
+        async function checkStake() {
+            if (!account) return;
+            try {
+                const stake = await contract.methods.taruhan(account).call();
+                const stakeInAIC = web3.utils.fromWei(stake, 'ether');
+                document.getElementById('stakeDisplay').textContent = `My Stake: ${stakeInAIC} AIC`;
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        async function withdrawStake() {
+            const amount = document.getElementById('withdrawAmount').value;
+
+            if (!amount) {
+                alert('Please enter amount to withdraw');
+                return;
+            }
+
+            try {
+                const amountInWei = web3.utils.toWei(amount, 'ether');
+                const result = await contract.methods.tarikTaruhan(amountInWei).send({ from: account });
+                document.getElementById('withdrawStatus').textContent = 'Withdraw successful!';
+                document.getElementById('withdrawStatus').className = 'success';
+                checkBalance(); // Update balance
+                checkStake(); // Update stake
+            } catch (error) {
+                console.error(error);
+                document.getElementById('withdrawStatus').textContent = 'Withdraw failed';
+                document.getElementById('withdrawStatus').className = 'error';
+            }
+        }
+
+        async function checkReward() {
+            if (!account) return;
+            try {
+                const reward = await contract.methods.dapatkanReward().call({ from: account });
+                const rewardInAIC = web3.utils.fromWei(reward, 'ether');
+                document.getElementById('rewardDisplay').textContent = `Reward: ${rewardInAIC} AIC`;
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        // Event listeners
+        document.getElementById('connectButton').addEventListener('click', connectWallet);
+        document.getElementById('checkBalance').addEventListener('click', checkBalance);
+        document.getElementById('transferButton').addEventListener('click', transferTokens);
+        document.getElementById('burnButton').addEventListener('click', burnTokens);
+        document.getElementById('stakeButton').addEventListener('click', stakeTokens);
+        document.getElementById('checkStake').addEventListener('click', checkStake);
+        document.getElementById('withdrawStake').addEventListener('click', withdrawStake);
+        document.getElementById('checkReward').addEventListener('click', checkReward);
+
+        // Initialize Web3 on page load
+        initWeb3();
+    </script>
+</body>
+</html>

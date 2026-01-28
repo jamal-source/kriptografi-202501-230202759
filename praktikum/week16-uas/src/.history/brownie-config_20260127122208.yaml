@@ -1,0 +1,26 @@
+dependencies:
+  - OpenZeppelin/openzeppelin-contracts@4.9.3
+
+compiler:
+  solc:
+    version: 0.8.0
+    evm_version: istanbul
+    remappings: []
+    optimizer:
+      enabled: true
+      runs: 200
+    path: /mnt/d/Tinycoin/solc
+
+networks:
+  default: development
+  development:
+    gas_limit: 6721975
+    gas_price: 0
+    revert: true
+  mainnet:
+    host: https://mainnet.infura.io/v3/YOUR_INFURA_KEY
+    chain_id: 1
+
+project_structure:
+  contracts_folder: kontrak
+  scripts_folder: skrip
